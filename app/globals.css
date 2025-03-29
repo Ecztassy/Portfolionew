@@ -27,9 +27,9 @@ html[lang="jp"] {
 }
 
 /* Add more specific styles for Japanese text in various components */
-html[lang="jp"] .text-green-400/70,
-html[lang="jp"] .text-green-400/80,
-html[lang="jp"] .text-green-400/90 {
+html[lang="jp"] .text-green-400\/70,
+html[lang="jp"] .text-green-400\/80,
+html[lang="jp"] .text-green-400\/90 {
   line-height: 1.8;
   word-break: break-word;
 }
