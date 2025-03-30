@@ -105,8 +105,8 @@ const translations: Record<Language, Record<string, string>> = {
     "projects.items.server.description": "My home server that runs on a old computer. It runs alpine linux setted up with pihole for adblocking and security, a minecraft server and a file hosting server.",
     "projects.items.server.category": "linux",
 
-    "projects.items.pixel.title": "Store Manegement Program",
-    "projects.items.pixel.description": "I created a store manegement software with C# and WinUI for the Windows OS.",
+    "projects.items.pixel.title": "Store Management Program",
+    "projects.items.pixel.description": "I created a store management software with C# and WinUI for the Windows OS.",
     "projects.items.pixel.category": "software",
 
     "projects.items.artifacts.title": "EZPass",
