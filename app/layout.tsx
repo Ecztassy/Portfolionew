@@ -5,7 +5,7 @@ import { LanguageProvider } from "@/contexts/language-context"
 
 export const metadata: Metadata = {
   title: "Portfolio",
-  description: "Experience the future, powered by retro vibes",
+  description: "My portfolio",
   icons: {
     icon: "/favicon.ico",
   },
