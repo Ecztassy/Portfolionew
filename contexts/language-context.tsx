@@ -49,7 +49,7 @@ const translations: Record<Language, Record<string, string>> = {
     "about.p2":
       "My work focuses on Fullstack web development, Software development, Servers and Databases. ",
     "about.p3":
-      "I am to be out of alpha and be the better version of myself, improving everyday, everytime.",
+      "I aim to be out of alpha and be the better version of myself, improving everyday, everytime.",
     "about.quote": "Above everything, make yourself proud.",
     "about.terminal.identity": "Identity confirmed",
     "about.terminal.connection": "Connection established",
