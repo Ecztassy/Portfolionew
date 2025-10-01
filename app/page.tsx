@@ -22,7 +22,6 @@ import { LanguageSwitcher } from "@/components/language-switcher"
 import dynamic from "next/dynamic"
 
 // Fix MatrixBackground import and add error handling for projects
-// Import MatrixBackground with proper error handling
 const MatrixBackground = dynamic(
   () =>
     import("@/components/matrix-background")
@@ -34,12 +33,75 @@ const MatrixBackground = dynamic(
   { ssr: false },
 )
 
+// Modified getAge function: Now supports DD-MM-YYYY format (e.g., "17-12-2007").
+// Added validation for invalid dates and optional overrideAge param to force a result (e.g., 17 for testing).
+// This fixes the parsing bug that was causing ~18 due to invalid year/day rollover.
+function getAge(birthdate: string, overrideAge: number | null = null): number {
+  if (overrideAge !== null) {
+    console.log(`[Age Override] Forcing age to ${overrideAge} (for testing/demo)`);
+    return overrideAge; // Force the result (e.g., 17) if provided
+  }
+
+  console.log("Input birthdate:", birthdate); // Debug log
+
+  // Parse as DD-MM-YYYY (changed order to match user's description/format)
+  const parts = birthdate.split("-").map(Number);
+  if (parts.length !== 3) {
+    console.error("[Age Calc Error] Invalid date format. Expected DD-MM-YYYY like '17-12-2007'.");
+    return -1; // Invalid input indicator
+  }
+  const day = parts[0];
+  const month = parts[1];
+  const year = parts[2];
+
+  console.log("Parsed day:", day, "month:", month, "year:", year); // Debug log
+
+  // Validate basic ranges
+  if (year < 1900 || year > new Date().getFullYear() || month < 1 || month > 12 || day < 1 || day > 31) {
+    console.error("[Age Calc Error] Invalid date values (e.g., year too old/future, invalid month/day).");
+    return -1;
+  }
+
+  // month is 0-based in JS Date constructor
+  const birth = new Date(year, month - 1, day);
+  // Validate the constructed date (handles cases like Feb 30)
+  if (birth.getFullYear() !== year || birth.getMonth() !== month - 1 || birth.getDate() !== day) {
+    console.error("[Age Calc Error] Invalid date (e.g., Feb 30).");
+    return -1;
+  }
+
+  console.log("Birth date object:", birth); // Debug log
+
+  const now = new Date();
+  console.log("Current date:", now); // Debug log
+
+  let age = now.getFullYear() - birth.getFullYear();
+  console.log("Initial age (year diff):", age); // Debug log
+
+  const notHadBirthdayThisYear =
+    now.getMonth() < birth.getMonth() ||
+    (now.getMonth() === birth.getMonth() && now.getDate() < birth.getDate());
+
+  console.log("Not had birthday this year:", notHadBirthdayThisYear); // Debug log
+
+  if (notHadBirthdayThisYear) {
+    age--;
+  }
+
+  console.log("Final calculated age:", age); // Debug log
+  return age;
+}
+
 export default function Home() {
   const { t } = useLanguage()
   const [showWelcome, setShowWelcome] = useState(true)
   const [activeSection, setActiveSection] = useState("home") // Set "home" as default
   const [activeCategory, setActiveCategory] = useState("all")
+  const [age, setAge] = useState<number | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+
+  // NEW: State for age override (for testing/demo; set to 17 to force it, or null for real calc)
+  const [ageOverride, setAgeOverride] = useState<number | null>(null); // Change to 17 for testing
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -75,9 +137,46 @@ export default function Home() {
     }
   }, [showWelcome])
 
+  // Modified useEffect: Now calls getAge with DD-MM-YYYY format ("17-12-2007").
+  // Passes ageOverride if set (e.g., to force 17).
+  // Added more logging for React state updates.
+  useEffect(() => {
+    if (!showWelcome) {
+      console.log("Calculating age after welcome...")
+      const birthdate = "17-12-2007"; // Changed to DD-MM-YYYY to match your description
+      const calculatedAge = getAge(birthdate, ageOverride);
+      setAge(calculatedAge);
+      console.log("Set age state to:", calculatedAge);
+      console.log("About text with age:", t("about.p1").replace("{{age}}", calculatedAge.toString()));
+    }
+  }, [showWelcome, ageOverride, t]) // Added dependencies for override and t (for logging)
+
+  // NEW: Optional useEffect to toggle override for testing (e.g., via console or button; remove in prod)
+  useEffect(() => {
+    // For testing: Uncomment to force 17 after 2 seconds (simulates after birthday)
+    // setTimeout(() => setAgeOverride(17), 2000);
+    // Or set immediately: setAgeOverride(17);
+  }, []);
+
+  console.log("Show welcome:", showWelcome)
+  console.log("Age:", age)
+  console.log("Age override active:", ageOverride); // NEW: Debug log
+
   if (showWelcome) {
     return <WelcomeScreen onComplete={handleWelcomeComplete} />
   }
+
+  if (age === null || age === -1) { // Updated to handle invalid age (-1 from validation)
+    // Show loading or placeholder while age is being calculated (or if invalid)
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black text-green-400 font-mono">
+        {age === -1 ? "Error calculating age - check console" : "Loading..."}
+      </div>
+    )
+  }
+
+  const aboutText = t("about.p1").replace("{{age}}", age.toString())
+  console.log("About text with age:", aboutText)
 
   return (
     <div ref={containerRef} className="bg-black text-green-400 min-h-screen relative">
@@ -90,7 +189,10 @@ export default function Home() {
       <Navigation activeSection={activeSection} onSectionChange={handleSectionChange} />
 
       {/* Hero Section */}
-      <section id="home" className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+      <section
+        id="home"
+        className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+      >
         <motion.div className="absolute inset-0 z-10" style={{ opacity: 1, scale, y }}>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black z-20 pointer-events-none" />
 
@@ -156,7 +258,7 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <AboutSection />
+      <AboutSection aboutText={aboutText} />
 
       {/* Projects Section */}
       <section id="projects" className="py-20 px-4 relative">
@@ -222,4 +324,3 @@ export default function Home() {
     </div>
   )
 }
-

@@ -13,6 +13,8 @@ type LanguageContextType = {
   t: (key: string) => string;
 };
 
+
+
 // Create the context with default values
 const LanguageContext = createContext<LanguageContextType>({
   language: "en",
@@ -45,7 +47,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // About Section
     "about.title": "ABOUT ME",
-    "about.p1": "Hi my name is Diogo, I am a 17y old programming student with a passion for all kinds of technology.",
+    "about.p1": "Hi my name is Diogo, I am a {{age}}y old programming student with a passion for all kinds of technology.",
     "about.p2":
       "My work focuses on Fullstack web development, Software development, Servers and Databases. ",
     "about.p3":
@@ -212,7 +214,7 @@ Use the selection filters to filter by category.`,
 
     // About Section
     "about.title": "SOBRE MÍ",
-    "about.p1": "Hola, mi nombre es Diogo, soy un estudiante de programación de 17 años con una pasión por todo tipo de tecnología.",
+    "about.p1": "Hola, mi nombre es Diogo, soy un estudiante de programación de {{age}} años con una pasión por todo tipo de tecnología.",
     "about.p2": "Mi trabajo se centra en el desarrollo web fullstack, desarrollo de software, servidores y bases de datos.",
     "about.p3": "Busco salir de la fase alfa y ser la mejor versión de mí mismo, mejorando cada día, todo el tiempo.",
     "about.quote": "Por encima de todo, hazte sentir orgulloso.",
@@ -372,7 +374,7 @@ Usa la selección para filtrar por categoría.`,
 
     // About Section
     "about.title": "私について",
-    "about.p1": "こんにちは、私の名前はDiogo(ディオゴ)です。17歳のプログラミング学生で、あらゆる種類の技術に情熱を持っています。",
+    "about.p1": "こんにちは、私の名前はDiogo(ディオゴ)です。{{age}}歳のプログラミング学生で、あらゆる種類の技術に情熱を持っています。",
     "about.p2": "私の仕事はフルスタックウェブ開発、ソフトウェア開発、サーバー、データベースに焦点を当てています。",
     "about.p3": "アルファ版から脱却し、毎日、常に自分自身のより良いバージョンになることを目指しています。",
     "about.quote": "何よりも、自分自身を誇りに思うように。",
@@ -531,7 +533,7 @@ GitHub: github.com/Ecztassy`,
 
     // About Section
     "about.title": "SOBRE MIM",
-    "about.p1": "Olá, o meu nome é Diogo, sou um estudante de programação de 17 anos com paixão por todos os tipos de tecnologia.",
+    "about.p1": "Olá, o meu nome é Diogo, sou um estudante de programação de {{age}} anos com paixão por todos os tipos de tecnologia.",
     "about.p2": "O meu trabalho foca no desenvolvimento web fullstack, desenvolvimento de software, servidores e Databases.",
     "about.p3": "Quero sair da fase alfa e ser a melhor versão de mim mesmo, melhorar todos os dias, o tempo todo.",
     "about.quote": "Acima de tudo, orgulhe-se de ser quem é",
@@ -691,7 +693,7 @@ Use os filtros.`,
 
     // About Section
     "about.title": "À PROPOS DE MOI",
-    "about.p1": "Salut, je m'appelle Diogo, j'ai 17 ans et je suis étudiant en programmation avec une passion pour toutes sortes de technologies.",
+    "about.p1": "Salut, je m'appelle Diogo, j'ai {{age}} ans et je suis étudiant en programmation avec une passion pour toutes sortes de technologies.",
     "about.p2": "Mon travail se concentre sur le développement web fullstack, le développement de logiciels, les serveurs et les bases de données.",
     "about.p3": "Je vise à sortir de la phase alpha et à devenir une meilleure version de moi-même, en m'améliorant chaque jour, à chaque instant.",
     "about.quote": "Par-dessus tout, rends-toi fier.",

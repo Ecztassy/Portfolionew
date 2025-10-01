@@ -4,8 +4,11 @@ import { useRef } from "react"
 import { motion, useInView } from "framer-motion"
 import { GlitchText } from "./glitch-text"
 import { useLanguage } from "@/contexts/language-context"
+type AboutSectionProps = {
+  aboutText: string
+}
 
-export function AboutSection() {
+export function AboutSection({ aboutText }: AboutSectionProps){
   const { t } = useLanguage()
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, amount: 0.1 })
@@ -23,7 +26,7 @@ export function AboutSection() {
             <GlitchText text={t("about.title")} className="text-3xl md:text-4xl font-bold mb-6" />
 
             <div className="space-y-4">
-              <div className="text-green-400/90">{t("about.p1")}</div>
+              <div className="text-green-400/90">{aboutText}</div>
 
               <div className="text-green-400/80">{t("about.p2")}</div>
 
