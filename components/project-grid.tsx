@@ -6,12 +6,15 @@ import { GlitchText } from "./glitch-text"
 import { ExternalLink, Github } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import Image from "next/image"
+import { title } from "process"
 
 interface ProjectGridProps {
   activeCategory: string
+  pageSize?: number // 👈 Add this line
 }
 
-export function ProjectGrid({ activeCategory }: ProjectGridProps) {
+
+export function ProjectGrid({ activeCategory, pageSize = 10 }: ProjectGridProps) {
   const { t, language } = useLanguage()
   const [hoveredProject, setHoveredProject] = useState<string | null>(null)
   const [filteredProjects, setFilteredProjects] = useState<any[]>([])
@@ -101,6 +104,15 @@ export function ProjectGrid({ activeCategory }: ProjectGridProps) {
       category: "software",
       github: "https://github.com/Ecztassy/EZPass",
     },
+    {
+        id:"project11",
+        title: t("projects.items.about1.title"),
+        description: t("projects.items.about1.description"),
+        image: "/images/place.png",
+        category: "web",
+        link: "https://abouttassy.vercel.app",
+        github: "https://github.com/Ecztassy/abouttassy",
+      },
   ]
 
   // Update filtered projects when activeCategory or language changes
@@ -190,6 +202,15 @@ export function ProjectGrid({ activeCategory }: ProjectGridProps) {
         category: "software",
         github: "https://github.com/Ecztassy/EZPass",
       },
+      {
+        id:"project11",
+        title: t("projects.items.about1.title"),
+        description: t("projects.items.about1.description"),
+        image: "/images/place.png",
+        category: "web",
+        link: "https://abouttassy.vercel.app",
+        github: "https://github.com/Ecztassy/abouttassy",
+      },
     ]
 
     // Update the projects reference
@@ -262,7 +283,7 @@ export function ProjectGrid({ activeCategory }: ProjectGridProps) {
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
           {isLoading ? (
             <motion.div
               initial={{ opacity: 0 }}

@@ -114,7 +114,7 @@ export function ProjectCategories({ onCategoryChange }: ProjectCategoriesProps) 
         </div>
 
         {/* Terminal Content - Always expanded by default */}
-        <AnimatePresence initial={false}>
+        <AnimatePresence>
           {isExpanded && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}

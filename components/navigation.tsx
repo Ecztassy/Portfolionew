@@ -74,14 +74,12 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
             </div>
 
             <div className="md:hidden flex items-center">
-              {/* Mobile Language Selector */}
-
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="p-2 rounded-md text-green-400 hover:text-green-400/80 focus:outline-none"
               >
                 <span className="sr-only">Open main menu</span>
-                {isOpen ? <X size={24} /> : <Menu size={24} />}
+                <Menu size={24} />
               </button>
             </div>
           </div>
@@ -91,13 +89,24 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              className="fixed inset-0 z-40 bg-black/95 md:hidden"
+              className="fixed inset-0 z-50 bg-black/95 md:hidden flex flex-col"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "100vh" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <div className="pt-20 pb-3 px-2 space-y-1 sm:px-3">
+              {/* Close button inside mobile menu */}
+              <div className="flex justify-end p-4">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="text-green-400 hover:text-green-400/80 focus:outline-none"
+                >
+                  <X size={28} />
+                </button>
+              </div>
+
+              {/* Nav links */}
+              <div className="flex-1 pt-4 pb-6 px-4 space-y-4">
                 {navItems.map((item, index) => (
                   <motion.button
                     key={item.id}
@@ -123,4 +132,3 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
     </>
   )
 }
-

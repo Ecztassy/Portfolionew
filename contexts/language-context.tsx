@@ -115,6 +115,11 @@ const translations: Record<Language, Record<string, string>> = {
     "projects.items.artifacts.description": "A password manager software written in Rust and Slint. It uses Argon2 and SHA256 for encryption and hashing. It also syncs with a browser extension for autocomplete.",
     "projects.items.artifacts.category": "software",
 
+    "projects.items.about1.title": "Modern About Me",
+    "projects.items.about1.description": "A new version of the about me page.",
+    "project.items.about1.description" : "web",
+
+
     // Skills Section
     "skills.title": "SKILLS",
     "skills.description": "Technical abilities acquired through my experiences and research.",
@@ -280,6 +285,10 @@ Use the selection filters to filter by category.`,
     "projects.items.artifacts.description": "Un software de gestión de contraseñas escrito en Rust y Slint. Utiliza Argon2 y SHA256 para cifrado y hash. También se sincroniza con una extensión de navegador para autocompletado.",
     "projects.items.artifacts.category": "software",
 
+    "projects.items.about1.title": "Nuevo sobre mi",
+    "projects.items.about1.description": "Una Nueva versión da página sobre mi",
+    "project.items.about1.description" : "web",
+
     // Skills Section
     "skills.title": "HABILIDADES",
     "skills.description": "Habilidades técnicas adquiridas a través de mis experiencias e investigación.",
@@ -440,6 +449,10 @@ Usa la selección para filtrar por categoría.`,
     "projects.items.artifacts.description": "RustとSlintで書かれたパスワード管理ソフトウェア。Argon2とSHA256を使用して暗号化とハッシュを行い、ブラウザ拡張機能と同期して自動入力も可能です。",
     "projects.items.artifacts.category": "software",
 
+    "projects.items.about1.title": "ノボ ソブレ ミム",
+    "projects.items.about1.description": "最近のページの内容を確認しました。",
+    "project.items.about1.description" : "ウェブ",
+
     // Skills Section
     "skills.title": "スキル",
     "skills.description": "私の経験と研究を通じて獲得した技術的能力。",
@@ -599,6 +612,10 @@ GitHub: github.com/Ecztassy`,
     "projects.items.artifacts.description": "Um software de gerenciamento de palavras-passe escrito em Rust e Slint. Usa Argon2 e SHA256 para criptografia e hash. Também sincroniza com uma extensão de 'browser' para autocompletar.",
     "projects.items.artifacts.category": "software",
 
+    "projects.items.about1.title": "Novo sobre mim",
+    "projects.items.about1.description": "Uma versão recente da página sobre mim.",
+    "project.items.about1.description" : "web",
+
     // Skills Section
     "skills.title": "HABILIDADES",
     "skills.description": "Habilidades técnicas adquiridas por meio das minhas experiências e pesquisas.",
@@ -723,7 +740,7 @@ Use os filtros.`,
     "projects.items.ezpass.description": "Un site web que j'ai créé pour promouvoir mon logiciel de gestion de mots de passe.",
     "projects.items.ezpass.category": "web",
 
-    "projects.items.portfolio.title": "Ancien Portfolio",
+    "projects.items.portfolio.title": "Premier Portfolio",
     "projects.items.portfolio.description": "Mon ancien site de portfolio, créé avec jQuery et Bootstrap.",
     "projects.items.portfolio.category": "web",
 
@@ -731,7 +748,7 @@ Use os filtros.`,
     "projects.items.protocol.description": "Une page que j'ai créée pour parler de moi et de ma personnalité.",
     "projects.items.protocol.category": "web",
 
-    "projects.items.memory.title": "Tout Premier Site Web",
+    "projects.items.memory.title": "Premier Site Web",
     "projects.items.memory.description": "Créé pour l'école, un site web simple pour expliquer le matériel, les logiciels, les serveurs et fournir du contenu pour nos sujets.",
     "projects.items.memory.category": "web",
 
@@ -758,6 +775,12 @@ Use os filtros.`,
     "projects.items.artifacts.title": "EZPass",
     "projects.items.artifacts.description": "Un logiciel de gestion de mots de passe écrit en Rust et Slint. Il utilise Argon2 et SHA256 pour le chiffrement et le hachage. Il se synchronise également avec une extension de navigateur pour l'autocomplétion.",
     "projects.items.artifacts.category": "logiciel",
+
+    "projects.items.about1.title": "Nouvelle page web à propos de moi",
+    "projects.items.about1.description": "Version récente de la page à propos de moi",
+    "project.items.about1.description" : "web",
+
+    
 
     // Skills Section
     "skills.title": "COMPÉTENCES",
@@ -806,7 +829,7 @@ Use os filtros.`,
 
     // Footer
     "footer.copyright": "Diogo Fragoso",
-    "footer.presentDay": "Cet la vie",
+    "footer.presentDay": "From the Void",
 
     // Terminal
     "terminal.title": "CONNEXION TERMINAL",

@@ -9,23 +9,31 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
-  keywords: ["Portfolio", "Professional", "cybersecurity", "Frontend", "Backend", "Linux", "Lain"],
+  keywords: [
+    "Portfolio",
+    "Professional",
+    "Cybersecurity",
+    "Frontend",
+    "Backend",
+    "Linux",
+    "Lain",
+  ],
 }
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        {/* Preload the GIF so it’s fetched immediately */}
+        <link rel="preload" as="image" href="/images/lain.gif" />
+      </head>
       <body>
         <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
   )
 }
-
-
-
-import './globals.css'
