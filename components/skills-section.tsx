@@ -129,10 +129,6 @@ export function SkillsSection() {
         </div>
       </div>
 
-      <div className="absolute inset-0 -z-10 opacity-5">
-        <div className="h-full w-full bg-[url('/images/terminal-bg.png')] bg-repeat" />
-      </div>
-
       {/* Skills Modal */}
       <SkillsModal skill={selectedSkill} skills={skills} isOpen={isModalOpen} onClose={closeModal} />
     </section>

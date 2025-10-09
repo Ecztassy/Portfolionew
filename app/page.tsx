@@ -77,10 +77,35 @@ export default function Home() {
   // Suppress console logs in production globally for this page
   useEffect(() => {
     if (process.env.NODE_ENV === "production") {
-      console.log = () => {}
-      console.warn = () => {}
+      console.log = () => { }
+      console.warn = () => { }
     }
   }, [])
+  // Smooth scroll to section when activeSection changes
+  useEffect(() => {
+    const section = document.getElementById(activeSection)
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" })
+    }
+  }, [activeSection])
+  useEffect(() => {
+    const sections = document.querySelectorAll("section[id]")
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute("id")
+            if (id) setActiveSection(id)
+          }
+        }
+      },
+      { threshold: 0.4 }
+    )
+
+    sections.forEach((sec) => observer.observe(sec))
+    return () => observer.disconnect()
+  }, [])
+
 
   if (showWelcome) {
     return <WelcomeScreen onComplete={() => setShowWelcome(false)} />
@@ -102,7 +127,15 @@ export default function Home() {
       </div>
 
       {/* Navigation */}
-      <Navigation activeSection={activeSection} onSectionChange={setActiveSection} />
+      <div
+        className="fixed top-0 left-0 right-0 z-[99999] pointer-events-auto will-change-transform translate-z-0"
+        style={{
+          transform: "translate3d(0, 0, 0)", // new stacking context above canvases
+        }}
+      >
+        <Navigation activeSection={activeSection} onSectionChange={setActiveSection} />
+      </div>
+
 
       {/* Hero Section */}
       <section
@@ -168,12 +201,6 @@ export default function Home() {
         >
           <ArrowDown className="text-green-400/50" />
         </motion.div>
-
-        <div className="absolute inset-0 bg-black/30 z-0">
-          <div className="absolute inset-0 opacity-20">
-            <div className="h-full w-full bg-[url('/images/terminal-bg.png')] bg-repeat" />
-          </div>
-        </div>
       </section>
 
       {/* About Section */}
@@ -193,41 +220,25 @@ export default function Home() {
             <LazyProjectGrid activeCategory={activeCategory} pageSize={10} />
           </div>
         </div>
-
-        <div className="absolute inset-0 -z-10 opacity-5">
-          <div className="h-full w-full bg-[url('/images/terminal-bg.png')] bg-repeat" />
-        </div>
       </section>
 
       {/* Skills Section */}
       <SkillsSection />
 
-      {/* Contact Section */}
-      <section id="contact" className="py-20 px-4 relative">
+      {/* Contact Section */} <section id="contact" className="py-20 px-4 relative">
         <div className="max-w-6xl mx-auto">
           <div className="mb-12 text-center">
             <GlitchText text={t("contact.title")} className="text-3xl md:text-4xl font-bold mb-4" />
             <p className="text-green-400/70 max-w-2xl mx-auto">{t("contact.description")}</p>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div className="h-[300px] sm:h-[400px] bg-black/30">
-              <Canvas>
-                <ambientLight intensity={1} />
-                <pointLight position={[10, 10, 10]} intensity={2} />
-                <pointLight position={[-5, 5, 5]} intensity={1.5} color="#00ff9d" />
-                <FloppyDisk position={[0, 0, 0]} />
-                <Environment preset="night" />
-                <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={2} />
-              </Canvas>
-            </div>
-
+            <div className="h-[300px] sm:h-[400px] bg-black/30"> <Canvas> <ambientLight intensity={1} />
+              <pointLight position={[10, 10, 10]} intensity={2} />
+              <pointLight position={[-5, 5, 5]} intensity={1.5} color="#00ff9d" />
+              <FloppyDisk position={[0, 0, 0]} /> <Environment preset="night" />
+            </Canvas> </div>
             <TerminalContact />
           </div>
-        </div>
-
-        <div className="absolute inset-0 -z-10 opacity-5">
-          <div className="h-full w-full bg-[url('/images/terminal-bg.png')] bg-repeat" />
         </div>
       </section>
 
