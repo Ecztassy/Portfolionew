@@ -1,9 +1,8 @@
 "use client"
 
-import { useState, useRef, useEffect, useMemo } from "react"
-import { Canvas } from "@react-three/fiber"
-import { motion } from "framer-motion"
+import { useState, useRef, useEffect, useMemo, useCallback, Suspense } from "react"
 import dynamic from "next/dynamic"
+import { motion } from "framer-motion"
 import { Navigation } from "@/components/navigation"
 import { ProjectCategories } from "@/components/project-categories"
 import { GlitchText } from "@/components/glitch-text"
@@ -12,15 +11,12 @@ import { AboutSection } from "@/components/about-section"
 import { TerminalContact } from "@/components/terminal-contact"
 import { Footer } from "@/components/footer"
 import { ArrowDown } from "lucide-react"
-import { FloppyDisk } from "@/components/floppy-disk"
-import { DesktopScene } from "@/components/desktop-scene"
 import { ContactForm } from "@/components/contact-form"
 import { WelcomeScreen } from "@/components/welcome-screen"
 import { useLanguage } from "@/contexts/language-context"
 import { LanguageSwitcher } from "@/components/language-switcher"
-import { Environment, OrbitControls } from "@react-three/drei"
 
-// Lazy load background and project grid
+// lightweight dynamic imports (client-only) for heavy 3D components
 const MatrixBackground = dynamic(
   () => import("@/components/matrix-background").then((mod) => mod.default || mod.MatrixBackground),
   { ssr: false }
@@ -30,6 +26,28 @@ const LazyProjectGrid = dynamic(
   () => import("@/components/project-grid").then((mod) => mod.ProjectGrid),
   { ssr: true, loading: () => <div>Loading projects…</div> }
 )
+
+// 3D components as client-only dynamic imports to avoid adding them to initial bundle
+const DesktopScene = dynamic(() => import("@/components/desktop-scene").then((m) => m.DesktopScene), {
+  ssr: false,
+  loading: () => null,
+})
+const FloppyDisk = dynamic(() => import("@/components/floppy-disk").then((m) => m.FloppyDisk), {
+  ssr: false,
+  loading: () => null,
+})
+const DreiEnvironment = dynamic(() => import("@react-three/drei").then((m) => m.Environment), {
+  ssr: false,
+  loading: () => null,
+})
+const DreiOrbit = dynamic(() => import("@react-three/drei").then((m) => m.OrbitControls), {
+  ssr: false,
+  loading: () => null,
+})
+const CanvasWrapper = dynamic(() => import("@react-three/fiber").then((m) => m.Canvas), {
+  ssr: false,
+  loading: () => null,
+})
 
 // Age calculation helper
 function getAge(birthdate: string, overrideAge: number | null = null): number {
@@ -51,6 +69,36 @@ function getAge(birthdate: string, overrideAge: number | null = null): number {
   return age
 }
 
+// small hook to detect when an element is in the viewport
+function useInView(threshold = 0.25) {
+  const ref = useRef<HTMLElement | null>(null)
+  const [inView, setInView] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setInView(true)
+      return
+    }
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setInView(true)
+            obs.disconnect()
+            return
+          }
+        }
+      },
+      { threshold }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [threshold])
+
+  return [ref, inView] as const
+}
+
 export default function Home() {
   const { t } = useLanguage()
   const [showWelcome, setShowWelcome] = useState(true)
@@ -59,13 +107,15 @@ export default function Home() {
   const [ageOverride, setAgeOverride] = useState<number | null>(null)
   const [age, setAge] = useState<number | null>(null)
 
-  // Memoize about text, so it only recalculates when age or translation changes
+  // ✅ Always call hooks before any conditional return
+  const [heroRef, heroInView] = useInView(0.2)
+  const [contactRef, contactInView] = useInView(0.2)
+
   const aboutText = useMemo(() => {
     if (age === null) return ""
     return t("about.p1").replace("{{age}}", age.toString())
   }, [age, t])
 
-  // Compute age once after welcome ends (or when override changes)
   useEffect(() => {
     if (!showWelcome) {
       const birthdate = "17-12-2007" // DD-MM-YYYY
@@ -74,20 +124,22 @@ export default function Home() {
     }
   }, [showWelcome, ageOverride])
 
-  // Suppress console logs in production globally for this page
+  // Suppress verbose logs in production
   useEffect(() => {
     if (process.env.NODE_ENV === "production") {
-      console.log = () => { }
-      console.warn = () => { }
+      console.log = () => {}
+      console.warn = () => {}
     }
   }, [])
-  // Smooth scroll to section when activeSection changes
+
+  // Smooth scroll when nav changes
   useEffect(() => {
     const section = document.getElementById(activeSection)
     if (section) {
       section.scrollIntoView({ behavior: "smooth" })
     }
   }, [activeSection])
+
   useEffect(() => {
     const sections = document.querySelectorAll("section[id]")
     const observer = new IntersectionObserver(
@@ -106,7 +158,12 @@ export default function Home() {
     return () => observer.disconnect()
   }, [])
 
+  const getDpr = useCallback(() => {
+    if (typeof window === "undefined") return 1
+    return Math.min(1.5, window.devicePixelRatio || 1)
+  }, [])
 
+  // ✅ Conditional rendering AFTER all hooks
   if (showWelcome) {
     return <WelcomeScreen onComplete={() => setShowWelcome(false)} />
   }
@@ -129,22 +186,16 @@ export default function Home() {
       {/* Navigation */}
       <div
         className="fixed top-0 left-0 right-0 z-[99999] pointer-events-auto will-change-transform translate-z-0"
-        style={{
-          transform: "translate3d(0, 0, 0)", // new stacking context above canvases
-        }}
+        style={{ transform: "translate3d(0, 0, 0)" }}
       >
         <Navigation activeSection={activeSection} onSectionChange={setActiveSection} />
       </div>
 
-
       {/* Hero Section */}
-      <section
-        id="home"
-        className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
-      >
+      <section id="home" className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
         <motion.div
-          initial={{ opacity: 1, scale: 1, y: 0 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
           className="absolute inset-0 z-10"
         >
@@ -171,34 +222,26 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="order-1 md:order-2 h-[300px] md:h-[500px]">
-                <Canvas camera={{ position: [0, 0, 4.5], fov: 80 }}>
-                  <ambientLight intensity={4} />
-                  <pointLight position={[10, 10, 10]} intensity={2} />
-                  <pointLight position={[-10, -10, -10]} intensity={1.5} color="#00ff9d" />
-                  <spotLight position={[0, 5, 5]} intensity={2} angle={0.3} penumbra={1} castShadow />
-                  <DesktopScene position={[0, 0, 0]} />
-                  <Environment preset="night" />
-                  <OrbitControls
-                    enableZoom={false}
-                    enablePan={false}
-                    enableRotate={true}
-                    minPolarAngle={Math.PI / 2 - 0.5}
-                    maxPolarAngle={Math.PI / 2 + 0.5}
-                    minAzimuthAngle={-Math.PI / 4}
-                    maxAzimuthAngle={Math.PI / 4}
-                  />
-                </Canvas>
+              <div ref={heroRef as any} className="order-1 md:order-2 h-[300px] md:h-[500px]">
+                {heroInView ? (
+                  <Suspense fallback={<div className="h-full flex items-center justify-center text-green-400/40">Loading 3D…</div>}>
+                    <CanvasWrapper dpr={getDpr()} camera={{ position: [0, 0, 4.5], fov: 75 }} gl={{ antialias: true }}>
+                      <ambientLight intensity={0.9} />
+                      <pointLight position={[5, 5, 5]} intensity={0.6} />
+                      <DesktopScene />
+                      <DreiEnvironment preset="night" />
+                      <DreiOrbit enableZoom={false} enablePan={false} />
+                    </CanvasWrapper>
+                  </Suspense>
+                ) : (
+                  <div className="h-full flex items-center justify-center text-green-400/40">3D preview</div>
+                )}
               </div>
             </div>
           </div>
         </motion.div>
 
-        <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Number.POSITIVE_INFINITY, duration: 2 }}
-        >
+        <motion.div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30" animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 2 }}>
           <ArrowDown className="text-green-400/50" />
         </motion.div>
       </section>
@@ -225,18 +268,28 @@ export default function Home() {
       {/* Skills Section */}
       <SkillsSection />
 
-      {/* Contact Section */} <section id="contact" className="py-20 px-4 relative">
+      {/* Contact Section */}
+      <section id="contact" className="py-20 px-4 relative">
         <div className="max-w-6xl mx-auto">
           <div className="mb-12 text-center">
             <GlitchText text={t("contact.title")} className="text-3xl md:text-4xl font-bold mb-4" />
             <p className="text-green-400/70 max-w-2xl mx-auto">{t("contact.description")}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div className="h-[300px] sm:h-[400px] bg-black/30"> <Canvas> <ambientLight intensity={1} />
-              <pointLight position={[10, 10, 10]} intensity={2} />
-              <pointLight position={[-5, 5, 5]} intensity={1.5} color="#00ff9d" />
-              <FloppyDisk position={[0, 0, 0]} /> <Environment preset="night" />
-            </Canvas> </div>
+            <div ref={contactRef as any} className="h-[300px] sm:h-[400px] bg-black/30">
+              {contactInView ? (
+                <Suspense fallback={<div className="h-full flex items-center justify-center text-green-400/40">Loading…</div>}>
+                  <CanvasWrapper dpr={getDpr()} gl={{ antialias: true }}>
+                    <ambientLight intensity={0.8} />
+                    <pointLight position={[6, 6, 6]} intensity={0.8} />
+                    <FloppyDisk />
+                    <DreiEnvironment preset="night" />
+                  </CanvasWrapper>
+                </Suspense>
+              ) : (
+                <div className="h-full flex items-center justify-center text-green-400/40">Contact preview</div>
+              )}
+            </div>
             <TerminalContact />
           </div>
         </div>
@@ -246,10 +299,7 @@ export default function Home() {
         <ContactForm />
       </div>
 
-      {/* Footer */}
       <Footer />
-
-      {/* Language Switcher */}
       <LanguageSwitcher />
     </div>
   )

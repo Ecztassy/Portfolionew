@@ -6,6 +6,8 @@
   --foreground-rgb: 0, 255, 157;
   --background-start-rgb: 0, 0, 0;
   --background-end-rgb: 0, 0, 0;
+  --bg: #000;
+  --accent: #00ff9d;
 }
 
 body {
@@ -202,4 +204,33 @@ body {
   min-height: 4rem;
   max-height: 6rem;
 }
+
+/* Reduce heavy animations and respect user preference */
+:root{
+  --bg: #000;
+  --accent: #00ff9d;
+}
+
+/* basic reset */
+html,body,#root {
+  height: 100%;
+  background: var(--bg);
+  color: #00ff9d;
+}
+
+/* Prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Avoid overuse of will-change */
+.will-change-transform { will-change: transform; }
+
+/* Limit heavy backgrounds opacity and pointer events */
+.pointer-none { pointer-events: none; }
 

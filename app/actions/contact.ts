@@ -71,3 +71,30 @@ ${formData.message}
   }
 }
 
+export async function POST(request: Request) {
+  try {
+    const data = await request.json().catch(() => null)
+    if (!data) {
+      return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400 })
+    }
+    const { name, email, message } = data
+    // basic validation and early exit
+    if (!name || !email || !message) {
+      return new Response(JSON.stringify({ error: "Missing fields" }), { status: 400 })
+    }
+
+    // sanitize simple inputs (avoid heavy libs)
+    const safeName = String(name).slice(0, 100)
+    const safeEmail = String(email).slice(0, 320)
+    const safeMessage = String(message).slice(0, 2000)
+
+    // TODO: forward to email / store - keep this fast and async
+    // simulate async non-blocking work (e.g. enqueue to a job)
+    // do not await long-running tasks here
+
+    return new Response(JSON.stringify({ success: true }), { status: 200 })
+  } catch (err) {
+    return new Response(JSON.stringify({ error: "Server error" }), { status: 500 })
+  }
+}
+
