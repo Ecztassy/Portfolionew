@@ -1,20 +1,19 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useRef, useState, memo } from "react"
 import { useFrame } from "@react-three/fiber"
 import type { Group } from "three"
 
-export function FloppyDisk(props: any) {
+export const FloppyDisk = memo((props: any) => {
   const group = useRef<Group>(null)
   const [hovered, setHovered] = useState(false)
   const [clicked, setClicked] = useState(false)
 
   useFrame((state) => {
-    if (group.current) {
-      group.current.position.y = Math.sin(state.clock.getElapsedTime() * 0.5) * 0.2
-      const rotationSpeed = clicked ? 0.05 : hovered ? 0.01 : 0.003
-      group.current.rotation.y += rotationSpeed
-    }
+    if (!group.current) return
+    group.current.position.y = Math.sin(state.clock.getElapsedTime() * 0.5) * 0.2
+    const rotationSpeed = clicked ? 0.05 : hovered ? 0.01 : 0.003
+    group.current.rotation.y += rotationSpeed
   })
 
   return (
@@ -29,48 +28,39 @@ export function FloppyDisk(props: any) {
     >
       {/* Lighting */}
       <ambientLight intensity={0.5} />
-      <pointLight position={[0, 0, 3]} intensity={2} color="#00ff9d" />
-      <pointLight position={[3, 0, 0]} intensity={1.5} color="#00ff9d" />
-      <pointLight position={[-3, 0, 0]} intensity={1.5} color="#00ff9d" />
-      <pointLight position={[0, 3, -3]} intensity={1} color="#ffffff" /> {/* backlight for separation */}
+      <directionalLight position={[3, 3, 3]} intensity={1} />
 
       {/* Main Floppy Body */}
-      <mesh castShadow receiveShadow>
+      <mesh>
         <boxGeometry args={[3.5, 3.5, 0.2]} />
-        <meshStandardMaterial color="#444444" roughness={0.7} />
+        <meshBasicMaterial color="#444" />
       </mesh>
 
-      {/* Top label area */}
-      <mesh position={[0, 1.2, 0.11]} castShadow receiveShadow>
+      {/* Top Label */}
+      <mesh position={[0, 1.2, 0.11]}>
         <boxGeometry args={[3.3, 0.8, 0.01]} />
-        <meshStandardMaterial color="#555555" roughness={0.6} />
+        <meshBasicMaterial color="#555" />
       </mesh>
 
       {/* Metal Slider */}
-      <mesh position={[0, 0, 0.11]} castShadow receiveShadow>
+      <mesh position={[0, 0, 0.11]}>
         <boxGeometry args={[3.3, 0.8, 0.01]} />
-        <meshStandardMaterial color="#666666" metalness={0.8} roughness={0.2} />
+        <meshBasicMaterial color="#666" />
       </mesh>
 
       {/* Hub Ring */}
-      <mesh position={[0, 0, 0.11]} castShadow receiveShadow rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.8, 0.8, 0.05, 32]} />
-        <meshStandardMaterial color="#888888" metalness={0.9} roughness={0.1} />
+      <mesh position={[0, 0, 0.11]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.8, 0.8, 0.05, 16]} />
+        <meshBasicMaterial color="#888" />
       </mesh>
 
-      {/* Glowing effect when hovered or clicked */}
+      {/* Glow */}
       {(hovered || clicked) && (
-        <mesh position={[0, 0, 0.11]} castShadow receiveShadow>
+        <mesh position={[0, 0, 0.11]}>
           <planeGeometry args={[3.5, 3.5]} />
-          <meshStandardMaterial
-            color="#00ff9d"
-            emissive="#00ff9d"
-            emissiveIntensity={clicked ? 0.5 : 0.2}
-            transparent
-            opacity={0.05} // slightly more visible
-          />
+          <meshBasicMaterial color="#00ff9d" transparent opacity={0.05} />
         </mesh>
       )}
     </group>
   )
-}
+})
