@@ -1,19 +1,26 @@
 "use client"
 
-import { useRef, useState, memo } from "react"
+import React, { useRef, useState, memo } from "react"
 import { useFrame } from "@react-three/fiber"
 import type { Group } from "three"
+import { useFPS } from "./useFPS"
 
 export const FloppyDisk = memo((props: any) => {
   const group = useRef<Group>(null)
   const [hovered, setHovered] = useState(false)
   const [clicked, setClicked] = useState(false)
+  const fps = useFPS()
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
     if (!group.current) return
-    group.current.position.y = Math.sin(state.clock.getElapsedTime() * 0.5) * 0.2
-    const rotationSpeed = clicked ? 0.05 : hovered ? 0.01 : 0.003
-    group.current.rotation.y += rotationSpeed
+
+    // Adjust rotation speed based on FPS
+    const baseSpeed = clicked ? 0.05 : hovered ? 0.01 : 0.003
+    const speedFactor = Math.min(fps / 60, 1) // reduce speed if FPS < 60
+    group.current.rotation.y += baseSpeed * speedFactor
+
+    // Bounce animation
+    group.current.position.y = Math.sin(state.clock.getElapsedTime() * 0.5) * 0.2 * speedFactor
   })
 
   return (
@@ -26,35 +33,29 @@ export const FloppyDisk = memo((props: any) => {
       onPointerOut={() => setHovered(false)}
       onClick={() => setClicked(!clicked)}
     >
-      {/* Lighting */}
       <ambientLight intensity={0.5} />
       <directionalLight position={[3, 3, 3]} intensity={1} />
 
-      {/* Main Floppy Body */}
       <mesh>
         <boxGeometry args={[3.5, 3.5, 0.2]} />
         <meshBasicMaterial color="#444" />
       </mesh>
 
-      {/* Top Label */}
       <mesh position={[0, 1.2, 0.11]}>
         <boxGeometry args={[3.3, 0.8, 0.01]} />
         <meshBasicMaterial color="#555" />
       </mesh>
 
-      {/* Metal Slider */}
       <mesh position={[0, 0, 0.11]}>
         <boxGeometry args={[3.3, 0.8, 0.01]} />
         <meshBasicMaterial color="#666" />
       </mesh>
 
-      {/* Hub Ring */}
       <mesh position={[0, 0, 0.11]} rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[0.8, 0.8, 0.05, 16]} />
         <meshBasicMaterial color="#888" />
       </mesh>
 
-      {/* Glow */}
       {(hovered || clicked) && (
         <mesh position={[0, 0, 0.11]}>
           <planeGeometry args={[3.5, 3.5]} />
