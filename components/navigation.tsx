@@ -12,20 +12,15 @@ interface NavigationProps {
 }
 
 export function Navigation({ activeSection, onSectionChange }: NavigationProps) {
-  // call hook normally (must be a client component)
   const langCtx = useLanguage()
-  const { t } = langCtx ?? { t: (k: string) => k } // safe fallback, though provider should exist
+  const { t } = langCtx ?? { t: (k: string) => k }
 
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [mounted, setMounted] = useState(false)
 
-  // ensure createPortal runs only on client
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  useEffect(() => setMounted(true), [])
 
-  // lock body scroll when mobile menu open
   useEffect(() => {
     if (!mounted) return
     const prev = document.body.style.overflow
@@ -35,7 +30,6 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
     }
   }, [isOpen, mounted])
 
-  // scroll detection (for nav BG)
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50)
     window.addEventListener("scroll", handleScroll, { passive: true })
@@ -54,9 +48,10 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
     [t]
   )
 
-  // mobile overlay/menu JSX (rendered into document.body via portal)
+  // mobile overlay/menu JSX (portal content)
   const mobileMenuNode = isOpen ? (
     <>
+      {/* background overlay */}
       <motion.div
         key="overlay"
         className="fixed inset-0 z-[10050] bg-black/60 md:hidden"
@@ -66,24 +61,15 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
         exit={{ opacity: 0 }}
       />
 
+      {/* slide-down menu */}
       <motion.div
         key="mobileMenu"
-        className="fixed inset-0 z-[10060] md:hidden flex flex-col"
+        className="fixed top-10 left-0 right-0 bottom-0 z-[10060] md:hidden flex flex-col"
         initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -16 }}
         transition={{ duration: 0.22, ease: "easeInOut" }}
       >
-        <div className="flex justify-end p-4">
-          <button
-            onClick={() => setIsOpen(false)}
-            className="text-green-400 hover:text-green-400/80 focus:outline-none"
-            aria-label="Close menu"
-          >
-            <X size={28} />
-          </button>
-        </div>
-
         <div className="flex-1 pt-4 pb-6 px-4 space-y-4 overflow-auto bg-black/95">
           {navItems.map((item, index) => (
             <motion.button
@@ -159,7 +145,7 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
               </div>
             </div>
 
-            {/* Mobile menu button */}
+            {/* Mobile menu toggle (works reliably) */}
             <div className="md:hidden flex items-center">
               <button
                 onClick={() => setIsOpen((v) => !v)}
@@ -174,7 +160,7 @@ export function Navigation({ activeSection, onSectionChange }: NavigationProps) 
         </div>
       </motion.nav>
 
-      {/* portal the mobile menu so it can't be covered by transforms/canvas */}
+      {/* Portal for overlay and menu */}
       {mounted && createPortal(<AnimatePresence>{mobileMenuNode}</AnimatePresence>, document.body)}
     </>
   )
