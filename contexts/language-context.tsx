@@ -91,8 +91,8 @@ const translations: Record<Language, Record<string, string>> = {
     "projects.items.memory.description": "Created for school, a simple website to explain about hardware, software, servers and to provide content for our subjects.",
     "projects.items.memory.category": "web",
 
-    "projects.items.engine.title": "FTP Server",
-    "projects.items.engine.description": "A simple FTP that I set up to store files on my personal server. It has safe linux file permissions and user control.",
+    "projects.items.engine.title": "SFTP Server",
+    "projects.items.engine.description": "A simple SFTP that I set up to store files on my personal server. It has safe linux file permissions and user control.",
     "projects.items.engine.category": "server",
 
     "projects.items.wired.title": "XAMPP/Wordpress",
@@ -261,8 +261,8 @@ Use the selection filters to filter by category.`,
     "projects.items.memory.description": "Creado para la escuela, un sitio web simple para explicar sobre hardware, software, servidores y proporcionar contenido para nuestras materias.",
     "projects.items.memory.category": "web",
 
-    "projects.items.engine.title": "Servidor FTP",
-    "projects.items.engine.description": "Un FTP simple que configuré para almacenar archivos en mi servidor personal. Tiene permisos de archivo seguros en Linux y control de usuarios.",
+    "projects.items.engine.title": "Servidor SFTP",
+    "projects.items.engine.description": "Un SFTP simple que configuré para almacenar archivos en mi servidor personal. Tiene permisos de archivo seguros en Linux y control de usuarios.",
     "projects.items.engine.category": "server",
 
     "projects.items.wired.title": "XAMPP/Wordpress",
@@ -425,8 +425,8 @@ Usa la selección para filtrar por categoría.`,
     "projects.items.memory.description": "学校のために作成した、ハードウェア、ソフトウェア、サーバーについて説明し、授業のためのコンテンツを提供するシンプルなウェブサイト。",
     "projects.items.memory.category": "web",
 
-    "projects.items.engine.title": "FTPサーバー",
-    "projects.items.engine.description": "私の個人サーバーにファイルを保存するために設定したシンプルなFTP。Linuxの安全なファイル許可とユーザー管理を備えています。",
+    "projects.items.engine.title": "SFTPサーバー",
+    "projects.items.engine.description": "私の個人サーバーにファイルを保存するために設定したシンプルなSFTP。Linuxの安全なファイル許可とユーザー管理を備えています。",
     "projects.items.engine.category": "server",
 
     "projects.items.wired.title": "XAMPP/Wordpress",
@@ -588,8 +588,8 @@ GitHub: github.com/Ecztassy`,
     "projects.items.memory.description": "Criado para um projeto escolar, um site simples para explicar sobre hardware, software, servidores e fornecer conteúdo para nossas disciplinas.",
     "projects.items.memory.category": "web",
 
-    "projects.items.engine.title": "Servidor FTP",
-    "projects.items.engine.description": "Um FTP simples que configurei para armazenar arquivos no meu servidor pessoal. Possui permissões de arquivo seguras no Linux e controle de utilizadores.",
+    "projects.items.engine.title": "Servidor SFTP",
+    "projects.items.engine.description": "Um SFTP simples que configurei para armazenar arquivos no meu servidor pessoal. Possui permissões de arquivo seguras no Linux e controle de utilizadores.",
     "projects.items.engine.category": "server",
 
     "projects.items.wired.title": "XAMPP/Wordpress",
@@ -752,8 +752,8 @@ Use os filtros.`,
     "projects.items.memory.description": "Créé pour l'école, un site web simple pour expliquer le matériel, les logiciels, les serveurs et fournir du contenu pour nos sujets.",
     "projects.items.memory.category": "web",
 
-    "projects.items.engine.title": "Serveur FTP",
-    "projects.items.engine.description": "Un simple serveur FTP que j'ai configuré pour stocker des fichiers sur mon serveur personnel. Il dispose de permissions de fichiers Linux sécurisées et d'un contrôle des utilisateurs.",
+    "projects.items.engine.title": "Serveur SFTP",
+    "projects.items.engine.description": "Un simple serveur SFTP que j'ai configuré pour stocker des fichiers sur mon serveur personnel. Il dispose de permissions de fichiers Linux sécurisées et d'un contrôle des utilisateurs.",
     "projects.items.engine.category": "serveur",
 
     "projects.items.wired.title": "XAMPP/Wordpress",
